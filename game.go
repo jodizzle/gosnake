@@ -4,26 +4,53 @@ import tl "github.com/JoelOtter/termloop"
 
 var game *tl.Game
 var firstPass bool
+var time float64
 
 type Player struct {
-	r *tl.Rectangle
-	prevX int
-	prevY int
-	level *tl.BaseLevel
+	r 			*tl.Rectangle
+	direction	string
+	prevX 		int
+	prevY 		int
+	level 		*tl.BaseLevel
 }
 
-func (player *Player) Draw(screen *tl.Screen) {
-	// screenWidth, screenHeight := screen.Size()
-	// x, y := player.entity.Position()
-	// player.level.SetOffset(screenWidth/2-x, screenHeight/2-y)
-
+//Handles auto events
+func (player *Player) Update(screen *tl.Screen) {
 	//tl.Screen.size() parameters are evidently zero until the game.Start(),
 	//So this is a crude solution intended to center the player after the game has begun
 	if firstPass {
 		screenWidth, screenHeight := screen.Size()
 		player.r.SetPosition(screenWidth/2, screenHeight/2)
 		firstPass = false
+	} /*else {
+		player.r.SetPosition(50,50)
+		firstPass = true
+	}*/
+
+	time += screen.TimeDelta()
+	if time > 0.1 {
+		time -= 0.1
+
+		player.prevX, player.prevY = player.r.Position()
+		switch player.direction {
+		case "right":
+			player.r.SetPosition(player.prevX+2, player.prevY)
+		case "left":
+			player.r.SetPosition(player.prevX-2, player.prevY)
+		case "up":
+			player.r.SetPosition(player.prevX, player.prevY-1)
+		case "down":
+			player.r.SetPosition(player.prevX, player.prevY+1)
+		}
 	}
+}
+
+func (player *Player) Draw(screen *tl.Screen) {
+	// screenWidth, screenHeight := screen.Size()
+	// x, y := player.entity.Position()
+	// player.level.SetOffset(screenWidth/2-x, screenHeight/2-y)
+	
+	player.Update(screen)
 
 	player.r.Draw(screen)
 }
@@ -35,13 +62,17 @@ func (player *Player) Tick(event tl.Event) {
 		//x, y := player.entity.Position()
 		switch event.Key {
 		case tl.KeyArrowRight:
-			player.r.SetPosition(player.prevX+1, player.prevY)
+			player.direction = "right"
+			//player.r.SetPosition(player.prevX+1, player.prevY)
 		case tl.KeyArrowLeft:
-			player.r.SetPosition(player.prevX-1, player.prevY)
+			player.direction = "left"
+			//player.r.SetPosition(player.prevX-1, player.prevY)
 		case tl.KeyArrowUp:
-			player.r.SetPosition(player.prevX, player.prevY-1)
+			player.direction = "up"
+			//player.r.SetPosition(player.prevX, player.prevY-1)
 		case tl.KeyArrowDown:
-			player.r.SetPosition(player.prevX, player.prevY+1)
+			player.direction = "down"
+			//player.r.SetPosition(player.prevX, player.prevY+1)
 		}
 	}
 
