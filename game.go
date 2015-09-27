@@ -31,7 +31,7 @@ func (player *Player) Update(screen *tl.Screen) {
 	//So this is a crude solution intended to center the player after the game has begun
 	if firstPass {
 		screenWidth, screenHeight := screen.Size()
-		player.r.SetPosition(screenWidth/2, screenHeight/2)
+		player.SetPosition(screenWidth/2, screenHeight/2)
 		firstPass = false
 	} /*else {
 		player.r.SetPosition(50,50)
@@ -42,16 +42,16 @@ func (player *Player) Update(screen *tl.Screen) {
 	if snakeTime > 0.1 {
 		snakeTime -= 0.1
 
-		player.prevX, player.prevY = player.r.Position()
+		player.prevX, player.prevY = player.Position()
 		switch player.direction {
 		case "right":
-			player.r.SetPosition(player.prevX+2, player.prevY)
+			player.SetPosition(player.prevX+1, player.prevY)
 		case "left":
-			player.r.SetPosition(player.prevX-2, player.prevY)
+			player.SetPosition(player.prevX-1, player.prevY)
 		case "up":
-			player.r.SetPosition(player.prevX, player.prevY-1)
+			player.SetPosition(player.prevX, player.prevY-1)
 		case "down":
-			player.r.SetPosition(player.prevX, player.prevY+1)
+			player.SetPosition(player.prevX, player.prevY+1)
 		}
 	}
 
@@ -80,42 +80,42 @@ func (player *Player) Draw(screen *tl.Screen) {
 
 // Remove rectangle add to snake length
 func (player *Player) Eat(rect *tl.Rectangle) {
+
+	// Have to delete from level entities, not screen
 	game.Screen().Level().RemoveEntity(rect)
 	game.Log("Entity Removed")
+
+
 }
 
 //Order seems to be Tick then Draw, but only if there is an event to activate Tick
 func (player *Player) Tick(event tl.Event) {
 	if event.Type == tl.EventKey {
-		player.prevX, player.prevY = player.r.Position()
+		player.prevX, player.prevY = player.Position()
 		//x, y := player.entity.Position()
 		switch event.Key {
 		case tl.KeyArrowRight:
 			player.direction = "right"
-			//player.r.SetPosition(player.prevX+1, player.prevY)
 		case tl.KeyArrowLeft:
 			player.direction = "left"
-			//player.r.SetPosition(player.prevX-1, player.prevY)
 		case tl.KeyArrowUp:
 			player.direction = "up"
-			//player.r.SetPosition(player.prevX, player.prevY-1)
 		case tl.KeyArrowDown:
 			player.direction = "down"
-			//player.r.SetPosition(player.prevX, player.prevY+1)
 		}
 	}
 
 	//Check box boundaries
-	playerX, playerY := player.r.Position()
+	playerX, playerY := player.Position()
 	screenWidth, screenHeight := game.Screen().Size()
 
 	//<= is used on the upper-boundaries to prevent the player from disappearing offscreen
 	//by one square
 	if playerX < 0 || playerX >= screenWidth {
-		player.r.SetPosition(player.prevX, player.prevY)
+		player.SetPosition(player.prevX, player.prevY)
 	}
 	if playerY < 0 || playerY >= screenHeight {
-		player.r.SetPosition(player.prevX, player.prevY)
+		player.SetPosition(player.prevX, player.prevY)
 	}
 }
 
@@ -127,10 +127,13 @@ func (player *Player) Position() (int, int) {
 	return player.r.Position()
 }
 
+func (player *Player) SetPosition(x, y int) {
+	player.r.SetPosition(x, y)
+}
+
 func (player *Player) Collide(collision tl.Physical) {
 	//Check if it's a rectangle we're colliding with
 	if rect, ok := collision.(*tl.Rectangle); ok {
-		//player.r.SetPosition(player.prevX, player.prevY)
 		player.Eat(rect)
 		game.Log("Rectangle Collision: %d", rect)
 	}
