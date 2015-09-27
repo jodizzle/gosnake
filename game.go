@@ -78,6 +78,12 @@ func (player *Player) Draw(screen *tl.Screen) {
 	player.r.Draw(screen)
 }
 
+// Remove rectangle add to snake length
+func (player *Player) Eat(rect *tl.Rectangle) {
+	game.Screen().Level().RemoveEntity(rect)
+	game.Log("Entity Removed")
+}
+
 //Order seems to be Tick then Draw, but only if there is an event to activate Tick
 func (player *Player) Tick(event tl.Event) {
 	if event.Type == tl.EventKey {
@@ -123,8 +129,10 @@ func (player *Player) Position() (int, int) {
 
 func (player *Player) Collide(collision tl.Physical) {
 	//Check if it's a rectangle we're colliding with
-	if _, ok := collision.(*tl.Rectangle); ok {
-		player.r.SetPosition(player.prevX, player.prevY)
+	if rect, ok := collision.(*tl.Rectangle); ok {
+		//player.r.SetPosition(player.prevX, player.prevY)
+		player.Eat(rect)
+		game.Log("Rectangle Collision: %d", rect)
 	}
 }
 
