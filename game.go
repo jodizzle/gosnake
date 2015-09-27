@@ -1,10 +1,15 @@
 package main
 
-import tl "github.com/JoelOtter/termloop"
+import (
+	tl "github.com/JoelOtter/termloop"
+	"math/rand"
+	"time"
+)
 
 var game *tl.Game
 var firstPass bool
-var time float64
+var snakeTime float64
+var spawnTime float64
 
 type Player struct {
 	r 			*tl.Rectangle
@@ -13,6 +18,12 @@ type Player struct {
 	prevY 		int
 	level 		*tl.BaseLevel
 }
+
+//Generates a random number in a given range
+// func Random(min, max, int) int {
+// 	rando := rand.New(rand.NewSource(time.Now().UnixNano()))
+// 	return rando.Int
+// }
 
 //Handles auto events
 func (player *Player) Update(screen *tl.Screen) {
@@ -27,9 +38,9 @@ func (player *Player) Update(screen *tl.Screen) {
 		firstPass = true
 	}*/
 
-	time += screen.TimeDelta()
-	if time > 0.1 {
-		time -= 0.1
+	snakeTime += screen.TimeDelta()
+	if snakeTime > 0.1 {
+		snakeTime -= 0.1
 
 		player.prevX, player.prevY = player.r.Position()
 		switch player.direction {
@@ -42,6 +53,18 @@ func (player *Player) Update(screen *tl.Screen) {
 		case "down":
 			player.r.SetPosition(player.prevX, player.prevY+1)
 		}
+	}
+
+	spawnTime += screen.TimeDelta()
+	if spawnTime > 1 {
+		spawnTime -= 1
+
+		screenWidth, screenHeight := screen.Size()
+		rando := rand.New(rand.NewSource(time.Now().UnixNano()))
+		spawnX, spawnY := rando.Intn(screenWidth), rando.Intn(screenHeight)
+		screen.Level().AddEntity(tl.NewRectangle(spawnX, spawnY, 1, 1, tl.ColorGreen))
+		
+		game.Log("Spawn at (%d,%d)", spawnX, spawnY)
 	}
 }
 
