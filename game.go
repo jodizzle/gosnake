@@ -6,6 +6,12 @@ import (
 	"time"
 )
 
+const (
+	startMessage = "SNAKE"
+	instructions = "ARROW KEYS TO MOVE"
+	instructions2 = "PRESS ENTER TO START"
+)
+
 var game *tl.Game
 var firstPass bool
 var snakeTime float64
@@ -206,11 +212,70 @@ func (player *Player) Collide(collision tl.Physical) {
 	}
 }
 
+type StartLevel struct {
+	message 		*tl.Text
+	instructions	*tl.Text
+	instructions2	*tl.Text
+}
+
+func (text *StartLevel) Draw(screen *tl.Screen) {
+	screenWidth, screenHeight := screen.Size()
+	text.message.SetPosition(screenWidth/2, screenHeight/2)
+	text.message.Draw(screen)
+	text.instructions.SetPosition(screenWidth/2 - 5, screenHeight/2 + 1)
+	text.instructions.Draw(screen)
+	text.instructions2.SetPosition(screenWidth/2 - 5, screenHeight/2 + 2)
+	text.instructions2.Draw(screen)
+}
+
+func (text *StartLevel) Tick(event tl.Event) {
+	if event.Type == tl.EventKey {
+		//player.prevX, player.prevY = player.Position()
+		//x, y := player.entity.Position()
+		// switch event.Key {
+		// case tl.KeyArrowRight:
+		// 	player.direction = "right"
+		// case tl.KeyArrowLeft:
+		// 	player.direction = "left"
+		// case tl.KeyArrowUp:
+		// 	player.direction = "up"
+		// case tl.KeyArrowDown:
+		// 	player.direction = "down"
+		// }
+		if event.Key == tl.KeyEnter {
+			level := tl.NewBaseLevel(tl.Cell {
+				Bg: tl.ColorBlack,
+				Fg: tl.ColorBlack,
+			})
+
+			player := Player{
+				snake:	[]*tl.Rectangle{tl.NewRectangle(50, 50, 1, 1, tl.ColorRed)},
+				level:	level,
+			}
+
+			//player.entity.SetCell(0, 0, &tl.Cell{Fg: tl.ColorRed, Ch: '☺'})
+			level.AddEntity(&player)
+			game.Screen().SetLevel(level)
+		}
+	}
+}
+
 func main() {
 	game = tl.NewGame()
 	game.SetDebugOn(true)
 
-	level := tl.NewBaseLevel(tl.Cell {
+	start := tl.NewBaseLevel(
+		tl.Cell{Bg: tl.ColorBlack, Fg: tl.ColorBlack, Ch: 'S'},
+	)
+
+	startText := StartLevel{
+		tl.NewText(0, 0, startMessage, tl.ColorGreen, tl.ColorBlack),
+		tl.NewText(0, 0, instructions, tl.ColorGreen, tl.ColorBlack),
+		tl.NewText(0, 0, instructions2, tl.ColorGreen, tl.ColorBlack),
+	}
+	start.AddEntity(&startText)
+
+/*	level := tl.NewBaseLevel(tl.Cell {
 		Bg: tl.ColorBlack,
 		Fg: tl.ColorBlack,
 	})
@@ -221,9 +286,10 @@ func main() {
 	}
 
 	//player.entity.SetCell(0, 0, &tl.Cell{Fg: tl.ColorRed, Ch: '☺'})
-	level.AddEntity(&player)
+	level.AddEntity(&player)*/
 
-	game.Screen().SetLevel(level)
+	//game.Screen().SetLevel(level)
+	game.Screen().SetLevel(start)
 	firstPass = true
 
 	game.Start()
