@@ -7,7 +7,7 @@ Built with [termloop](https://github.com/JoelOtter/termloop).
 # Installation
 To install
 ```bash
-$ go get -u github.com/aquilax/number_crusher
+$ go get -u github.com/jodizzle/go_game_jam
 ```
 To run
 ```bash
