@@ -218,8 +218,6 @@ func main() {
 		Fg: tl.ColorBlack,
 	})
 
-	level.AddEntity(tl.NewRectangle(10, 10, 50, 20, tl.ColorBlue))
-
 	player := Player{
 		snake:	[]*tl.Rectangle{tl.NewRectangle(50, 50, 1, 1, tl.ColorRed)},
 		level:	level,
