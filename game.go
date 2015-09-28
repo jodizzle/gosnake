@@ -27,12 +27,6 @@ type Player struct {
 	level 		*tl.BaseLevel
 }
 
-//Generates a random number in a given range
-// func Random(min, max, int) int {
-// 	rando := rand.New(rand.NewSource(time.Now().UnixNano()))
-// 	return rando.Int
-// }
-
 //Handles auto events
 func (player *Player) Update(screen *tl.Screen) {
 	//tl.Screen.size() parameters are evidently zero until the game.Start(),
@@ -41,10 +35,7 @@ func (player *Player) Update(screen *tl.Screen) {
 		screenWidth, screenHeight := screen.Size()
 		player.SetPosition(screenWidth/2, screenHeight/2)
 		firstPass = false
-	} /*else {
-		player.r.SetPosition(50,50)
-		firstPass = true
-	}*/
+	}
 
 	snakeTime += screen.TimeDelta()
 	if snakeTime > 0.1 {
@@ -99,28 +90,6 @@ func (player *Player) Update(screen *tl.Screen) {
 	}
 }
 
-// Old approach
-// func (player *Player) SnakeMovement(x, y int) {
-// 	// Appends a copy of the snake tail
-// 	tailX, tailY := player.snake[len(player.snake)-1].Position()
-// 	rect := tl.NewRectangle(tailX, tailY, 1, 1, tl.ColorGreen)
-// 	game.Screen().Level().AddEntity(rect)
-// 	player.snake = append(player.snake, rect)
-// 	// Set new position of head
-// 	player.SetPosition(x, y)
-// 	// Deletes old tail
-// 	// oldTail := player.snake[len(player.snake)-2]
-// 	// game.Screen().Level().RemoveEntity(oldTail)
-// 	// player.snake = append(player.snake[:len(player.snake)-2], player.snake[len(player.snake)-1:]...)
-// 	// Updates positions
-
-	// 	for i := 0; i < len(player.snake)-1; i++ {
-// 		prevX, prevY := player.snake[i].Position()
-// 		player.snake[i+1].SetPosition(prevX, prevY)
-// 	}
-// }
-
-
 func (player *Player) SnakeMovement() {
 	//Don't do anything if it's currently just the head
 	if len(player.snake) > 1 {
@@ -146,10 +115,6 @@ func (player *Player) SnakeMovement() {
 }
 
 func (player *Player) Draw(screen *tl.Screen) {
-	// screenWidth, screenHeight := screen.Size()
-	// x, y := player.entity.Position()
-	// player.level.SetOffset(screenWidth/2-x, screenHeight/2-y)
-	
 	player.Update(screen)
 
 	for _,s := range player.snake {
@@ -189,7 +154,6 @@ func (player *Player) Eat(rect *tl.Rectangle) {
 func (player *Player) Tick(event tl.Event) {
 	if event.Type == tl.EventKey {
 		player.prevX, player.prevY = player.Position()
-		//x, y := player.entity.Position()
 		switch event.Key {
 		case tl.KeyArrowRight:
 			player.direction = "right"
@@ -251,12 +215,10 @@ func GameOver() {
 		message: tl.NewText(0, 0, endMessage, tl.ColorGreen, tl.ColorBlack),
 		instructions: tl.NewText(0, 0, endInstructions, tl.ColorGreen, tl.ColorBlack),
 		instructions2: tl.NewText(0, 0, "", tl.ColorGreen, tl.ColorBlack),
-		//tl.NewText(0, 0, instructions2, tl.ColorGreen, tl.ColorBlack),
 	}
 
 	end.AddEntity(&endText)
 
-	//player.entity.SetCell(0, 0, &tl.Cell{Fg: tl.ColorRed, Ch: '☺'})
 	firstPass = true
 	game.Screen().SetLevel(end)
 }
@@ -279,18 +241,6 @@ func (text *StartLevel) Draw(screen *tl.Screen) {
 
 func (text *StartLevel) Tick(event tl.Event) {
 	if event.Type == tl.EventKey {
-		//player.prevX, player.prevY = player.Position()
-		//x, y := player.entity.Position()
-		// switch event.Key {
-		// case tl.KeyArrowRight:
-		// 	player.direction = "right"
-		// case tl.KeyArrowLeft:
-		// 	player.direction = "left"
-		// case tl.KeyArrowUp:
-		// 	player.direction = "up"
-		// case tl.KeyArrowDown:
-		// 	player.direction = "down"
-		// }
 		if event.Key == tl.KeyEnter {
 			level := tl.NewBaseLevel(tl.Cell {
 				Bg: tl.ColorBlack,
@@ -311,7 +261,7 @@ func (text *StartLevel) Tick(event tl.Event) {
 
 func main() {
 	game = tl.NewGame()
-	game.SetDebugOn(true)
+	game.SetDebugOn(false)
 
 	start := tl.NewBaseLevel(
 		tl.Cell{Bg: tl.ColorBlack, Fg: tl.ColorBlack, Ch: 'S'},
@@ -324,20 +274,6 @@ func main() {
 	}
 	start.AddEntity(&startText)
 
-/*	level := tl.NewBaseLevel(tl.Cell {
-		Bg: tl.ColorBlack,
-		Fg: tl.ColorBlack,
-	})
-
-	player := Player{
-		snake:	[]*tl.Rectangle{tl.NewRectangle(50, 50, 1, 1, tl.ColorRed)},
-		level:	level,
-	}
-
-	//player.entity.SetCell(0, 0, &tl.Cell{Fg: tl.ColorRed, Ch: '☺'})
-	level.AddEntity(&player)*/
-
-	//game.Screen().SetLevel(level)
 	game.Screen().SetLevel(start)
 	firstPass = true
 
