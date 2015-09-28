@@ -147,28 +147,23 @@ func (player *Player) Draw(screen *tl.Screen) {
 func (player *Player) Eat(rect *tl.Rectangle) {
 
 	// Have to delete from level entities, not screen
-	game.Screen().Level().RemoveEntity(rect)
+	//game.Screen().Level().RemoveEntity(rect)
 	game.Log("Entity Removed")
 
 	px, py := player.snake[len(player.snake)-1].Position()
+	rect.SetColor(tl.ColorWhite)
 	switch player.direction {
 	case "right":
 		rect.SetPosition(px-1, py)
-		player.snake = append(player.snake, rect)
-		game.Screen().Level().AddEntity(rect)
 	case "left":
 		rect.SetPosition(px+1, py)
-		player.snake = append(player.snake, rect)
-		game.Screen().Level().AddEntity(rect)
 	case "up":
 		rect.SetPosition(px, py+1)
-		player.snake = append(player.snake, rect)
-		game.Screen().Level().AddEntity(rect)
 	case "down":
 		rect.SetPosition(px, py-1)
-		player.snake = append(player.snake, rect)
-		game.Screen().Level().AddEntity(rect)
 	}
+
+	player.snake = append(player.snake, rect)
 }
 
 //Order seems to be Tick then Draw, but only if there is an event to activate Tick
@@ -204,8 +199,10 @@ func (player *Player) SetPosition(x, y int) {
 func (player *Player) Collide(collision tl.Physical) {
 	//Check if it's a rectangle we're colliding with
 	if rect, ok := collision.(*tl.Rectangle); ok {
-		player.Eat(rect)
-		game.Log("Rectangle Collision: %d", rect)
+		if (rect.Color() == tl.ColorGreen) {
+			player.Eat(rect)
+			game.Log("Rectangle Collision: %d", rect)
+		}
 	}
 }
 
