@@ -72,6 +72,19 @@ func (player *Player) Update(screen *tl.Screen) {
 		
 		game.Log("Spawn at (%d,%d)", spawnX, spawnY)
 	}
+
+	//Check box boundaries
+	playerX, playerY := player.Position()
+	screenWidth, screenHeight := game.Screen().Size()
+
+	//<= is used on the upper-boundaries to prevent the player from disappearing offscreen
+	//by one square
+	if playerX < 0 || playerX >= screenWidth {
+		player.SetPosition(player.prevX, player.prevY)
+	}
+	if playerY < 0 || playerY >= screenHeight {
+		player.SetPosition(player.prevX, player.prevY)
+	}
 }
 
 // Old approach
@@ -173,19 +186,6 @@ func (player *Player) Tick(event tl.Event) {
 		case tl.KeyArrowDown:
 			player.direction = "down"
 		}
-	}
-
-	//Check box boundaries
-	playerX, playerY := player.Position()
-	screenWidth, screenHeight := game.Screen().Size()
-
-	//<= is used on the upper-boundaries to prevent the player from disappearing offscreen
-	//by one square
-	if playerX < 0 || playerX >= screenWidth {
-		player.SetPosition(player.prevX, player.prevY)
-	}
-	if playerY < 0 || playerY >= screenHeight {
-		player.SetPosition(player.prevX, player.prevY)
 	}
 }
 
