@@ -5,11 +5,11 @@ A basic little snake game.  Eat as many green squares as you can before dying.  
 Built with [termloop](https://github.com/JoelOtter/termloop).
 
 # Installation
-To install
+To install termloop:
 ```bash
-$ go get -u github.com/jodizzle/go_game_jam
+$ go get -u github.com/JoelOtter/termloop
 ```
-To run
+To run, download game.go and
 ```bash
 $ go run game.go
 ```
