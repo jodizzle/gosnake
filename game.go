@@ -10,6 +10,8 @@ const (
 	startMessage = "SNAKE"
 	instructions = "ARROW KEYS TO MOVE"
 	instructions2 = "PRESS ENTER TO START"
+	endMessage = "GAME OVER"
+	endInstructions = "PRESS ENTER TO RESTART"
 )
 
 var game *tl.Game
@@ -85,11 +87,15 @@ func (player *Player) Update(screen *tl.Screen) {
 
 	//<= is used on the upper-boundaries to prevent the player from disappearing offscreen
 	//by one square
+	//(Funnily enough, when player.snake is more than one unit long, just stopping the player at 
+	//the boundaries also causes a game over state because the tail slides into the head)
 	if playerX < 0 || playerX >= screenWidth {
-		player.SetPosition(player.prevX, player.prevY)
+		GameOver()
+		//player.SetPosition(player.prevX, player.prevY)
 	}
 	if playerY < 0 || playerY >= screenHeight {
-		player.SetPosition(player.prevX, player.prevY)
+		GameOver()
+		//player.SetPosition(player.prevX, player.prevY)
 	}
 }
 
@@ -118,6 +124,8 @@ func (player *Player) Update(screen *tl.Screen) {
 func (player *Player) SnakeMovement() {
 	//Don't do anything if it's currently just the head
 	if len(player.snake) > 1 {
+		//Change color to white up here because of difficulties putting it in player.Eat()
+		player.snake[len(player.snake)-1].SetColor(tl.ColorWhite)
 
 		refSnake := make([]*tl.Rectangle, len(player.snake))
 		//Doesn't work because it 'copy' copies the pointers
@@ -152,12 +160,13 @@ func (player *Player) Draw(screen *tl.Screen) {
 // Remove rectangle and add to snake length
 func (player *Player) Eat(rect *tl.Rectangle) {
 
-	// Have to delete from level entities, not screen
-	//game.Screen().Level().RemoveEntity(rect)
-	game.Log("Entity Removed")
+	//Removing entities (at least the way that I approached it) doesn't seem to have much of an affect.
+	//Have to delete from level entities, not screen
+	// game.Screen().Level().RemoveEntity(rect)
+	// game.Screen().RemoveEntity(rect)
+	// game.Log("Entity Removed")
 
 	px, py := player.snake[len(player.snake)-1].Position()
-	rect.SetColor(tl.ColorWhite)
 	switch player.direction {
 	case "right":
 		rect.SetPosition(px-1, py)
@@ -170,6 +179,10 @@ func (player *Player) Eat(rect *tl.Rectangle) {
 	}
 
 	player.snake = append(player.snake, rect)
+	//Trying to change Color here doesn't seem to work, possibly because of the order that collisions are
+	//handled in.  Color is instead changed in player.Update()
+	// rect.SetColor(tl.ColorWhite)
+	// game.Screen().Level().AddEntity(rect)
 }
 
 //Order seems to be Tick then Draw, but only if there is an event to activate Tick
@@ -190,6 +203,17 @@ func (player *Player) Tick(event tl.Event) {
 	}
 }
 
+func (player *Player) InSnake(rect *tl.Rectangle) bool {
+	for i,s := range player.snake {
+		if rect == s {
+			game.Log("Death by %d at %d", s, i)
+			return true
+		}
+	}
+
+	return false
+}
+
 func (player *Player) Size() (int, int) {
 	return player.snake[0].Size()
 }
@@ -205,11 +229,36 @@ func (player *Player) SetPosition(x, y int) {
 func (player *Player) Collide(collision tl.Physical) {
 	//Check if it's a rectangle we're colliding with
 	if rect, ok := collision.(*tl.Rectangle); ok {
-		if (rect.Color() == tl.ColorGreen) {
+		if rect.Color() == tl.ColorGreen {
 			player.Eat(rect)
 			game.Log("Rectangle Collision: %d", rect)
 		}
+		if rect.Color() == tl.ColorWhite {
+			if player.InSnake(rect) {
+				GameOver()
+			}
+		}
 	}
+}
+
+func GameOver() {
+	end := tl.NewBaseLevel(tl.Cell {
+				Bg: tl.ColorRed,
+				Fg: tl.ColorBlack,
+			})
+
+	endText := StartLevel{
+		message: tl.NewText(0, 0, endMessage, tl.ColorGreen, tl.ColorBlack),
+		instructions: tl.NewText(0, 0, endInstructions, tl.ColorGreen, tl.ColorBlack),
+		instructions2: tl.NewText(0, 0, "", tl.ColorGreen, tl.ColorBlack),
+		//tl.NewText(0, 0, instructions2, tl.ColorGreen, tl.ColorBlack),
+	}
+
+	end.AddEntity(&endText)
+
+	//player.entity.SetCell(0, 0, &tl.Cell{Fg: tl.ColorRed, Ch: '☺'})
+	firstPass = true
+	game.Screen().SetLevel(end)
 }
 
 type StartLevel struct {
@@ -249,7 +298,7 @@ func (text *StartLevel) Tick(event tl.Event) {
 			})
 
 			player := Player{
-				snake:	[]*tl.Rectangle{tl.NewRectangle(50, 50, 1, 1, tl.ColorRed)},
+				snake:	[]*tl.Rectangle{tl.NewRectangle(0, 0, 1, 1, tl.ColorRed)},
 				level:	level,
 			}
 
