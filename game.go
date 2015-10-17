@@ -27,6 +27,23 @@ func GameOver() {
 	game.Screen().SetLevel(end)
 }
 
+func GameStart() {
+	start := tl.NewBaseLevel(
+		tl.Cell{Bg: tl.ColorBlack, Fg: tl.ColorBlack, Ch: 'S'},
+	)
+
+	startText := LevelText{
+		tl.NewText(0, 0, startMessage, tl.ColorGreen, tl.ColorBlack),
+		tl.NewText(0, 0, instructions, tl.ColorGreen, tl.ColorBlack),
+		tl.NewText(0, 0, instructions2, tl.ColorGreen, tl.ColorBlack),
+	}
+	
+	start.AddEntity(&startText)
+
+	firstPass = true
+	game.Screen().SetLevel(start)
+}
+
 type LevelText struct {
 	message 		*tl.Text
 	instructions	*tl.Text
@@ -66,20 +83,6 @@ func (text *LevelText) Tick(event tl.Event) {
 func NewGame() {
 	game = tl.NewGame()
 	game.SetDebugOn(false)
-
-	start := tl.NewBaseLevel(
-		tl.Cell{Bg: tl.ColorBlack, Fg: tl.ColorBlack, Ch: 'S'},
-	)
-
-	startText := LevelText{
-		tl.NewText(0, 0, startMessage, tl.ColorGreen, tl.ColorBlack),
-		tl.NewText(0, 0, instructions, tl.ColorGreen, tl.ColorBlack),
-		tl.NewText(0, 0, instructions2, tl.ColorGreen, tl.ColorBlack),
-	}
-	start.AddEntity(&startText)
-
-	game.Screen().SetLevel(start)
-	firstPass = true
-
+	GameStart()
 	game.Start()
 }
