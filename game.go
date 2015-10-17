@@ -15,7 +15,7 @@ func GameOver() {
 				Fg: tl.ColorBlack,
 			})
 
-	endText := StartLevel{
+	endText := LevelText {
 		message: tl.NewText(0, 0, endMessage, tl.ColorGreen, tl.ColorBlack),
 		instructions: tl.NewText(0, 0, endInstructions, tl.ColorGreen, tl.ColorBlack),
 		instructions2: tl.NewText(0, 0, "", tl.ColorGreen, tl.ColorBlack),
@@ -27,13 +27,13 @@ func GameOver() {
 	game.Screen().SetLevel(end)
 }
 
-type StartLevel struct {
+type LevelText struct {
 	message 		*tl.Text
 	instructions	*tl.Text
 	instructions2	*tl.Text
 }
 
-func (text *StartLevel) Draw(screen *tl.Screen) {
+func (text *LevelText) Draw(screen *tl.Screen) {
 	screenWidth, screenHeight := screen.Size()
 	text.message.SetPosition(screenWidth/2, screenHeight/2)
 	text.message.Draw(screen)
@@ -43,7 +43,7 @@ func (text *StartLevel) Draw(screen *tl.Screen) {
 	text.instructions2.Draw(screen)
 }
 
-func (text *StartLevel) Tick(event tl.Event) {
+func (text *LevelText) Tick(event tl.Event) {
 	if event.Type == tl.EventKey {
 		if event.Key == tl.KeyEnter {
 			level := tl.NewBaseLevel(tl.Cell {
@@ -71,7 +71,7 @@ func NewGame() {
 		tl.Cell{Bg: tl.ColorBlack, Fg: tl.ColorBlack, Ch: 'S'},
 	)
 
-	startText := StartLevel{
+	startText := LevelText{
 		tl.NewText(0, 0, startMessage, tl.ColorGreen, tl.ColorBlack),
 		tl.NewText(0, 0, instructions, tl.ColorGreen, tl.ColorBlack),
 		tl.NewText(0, 0, instructions2, tl.ColorGreen, tl.ColorBlack),
