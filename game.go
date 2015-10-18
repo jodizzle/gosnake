@@ -44,6 +44,22 @@ func GameStart() {
 	game.Screen().SetLevel(start)
 }
 
+func GamePlay() {
+	level := tl.NewBaseLevel(tl.Cell {
+				Bg: tl.ColorBlack,
+				Fg: tl.ColorBlack,
+			})
+
+	player := Player{
+		snake:	[]*tl.Rectangle{tl.NewRectangle(0, 0, 1, 1, tl.ColorRed)},
+		level:	level,
+	}
+
+	//player.entity.SetCell(0, 0, &tl.Cell{Fg: tl.ColorRed, Ch: '☺'})
+	level.AddEntity(&player)
+	game.Screen().SetLevel(level)
+}
+
 type LevelText struct {
 	message 		*tl.Text
 	instructions	*tl.Text
@@ -63,19 +79,7 @@ func (text *LevelText) Draw(screen *tl.Screen) {
 func (text *LevelText) Tick(event tl.Event) {
 	if event.Type == tl.EventKey {
 		if event.Key == tl.KeyEnter {
-			level := tl.NewBaseLevel(tl.Cell {
-				Bg: tl.ColorBlack,
-				Fg: tl.ColorBlack,
-			})
-
-			player := Player{
-				snake:	[]*tl.Rectangle{tl.NewRectangle(0, 0, 1, 1, tl.ColorRed)},
-				level:	level,
-			}
-
-			//player.entity.SetCell(0, 0, &tl.Cell{Fg: tl.ColorRed, Ch: '☺'})
-			level.AddEntity(&player)
-			game.Screen().SetLevel(level)
+			GamePlay()
 		}
 	}
 }
