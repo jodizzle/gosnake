@@ -6,8 +6,6 @@ import (
 
 var game *tl.Game
 var firstPass bool
-var snakeTime float64
-var spawnTime float64
 
 func GameOver() {
 	end := tl.NewBaseLevel(tl.Cell {

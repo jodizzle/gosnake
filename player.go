@@ -12,6 +12,8 @@ type Player struct {
 	prevX 		int
 	prevY 		int
 	level 		*tl.BaseLevel
+	snakeTime 	float64
+	spawnTime 	float64
 }
 
 //Handles auto events
@@ -24,9 +26,9 @@ func (player *Player) Update(screen *tl.Screen) {
 		firstPass = false
 	}
 
-	snakeTime += screen.TimeDelta()
-	if snakeTime > 0.1 {
-		snakeTime -= 0.1
+	player.snakeTime += screen.TimeDelta()
+	if player.snakeTime > 0.1 {
+		player.snakeTime -= 0.1
 
 		player.prevX, player.prevY = player.Position()
 		switch player.direction {
@@ -43,9 +45,9 @@ func (player *Player) Update(screen *tl.Screen) {
 		player.SnakeMovement()
 	}
 
-	spawnTime += screen.TimeDelta()
-	if spawnTime > 1 {
-		spawnTime -= 1
+	player.spawnTime += screen.TimeDelta()
+	if player.spawnTime > 1 {
+		player.spawnTime -= 1
 
 		screenWidth, screenHeight := screen.Size()
 		rando := rand.New(rand.NewSource(time.Now().UnixNano()))
