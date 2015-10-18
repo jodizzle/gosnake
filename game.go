@@ -42,6 +42,7 @@ func GameStart() {
 
 	firstPass = true
 	game.Screen().SetLevel(start)
+	game.Start()
 }
 
 func GamePlay() {
@@ -87,5 +88,4 @@ func NewGame() {
 	game = tl.NewGame()
 	game.SetDebugOn(false)
 	GameStart()
-	game.Start()
 }
