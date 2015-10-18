@@ -32,16 +32,12 @@ func (player *Player) Update(screen *tl.Screen) {
 		switch player.direction {
 		case "right":
 			player.SetPosition(player.prevX+1, player.prevY)
-			//player.SnakeMovement(player.prevX+1, player.prevY)
 		case "left":
 			player.SetPosition(player.prevX-1, player.prevY)
-			//player.SnakeMovement(player.prevX-1, player.prevY)
 		case "up":
 			player.SetPosition(player.prevX, player.prevY-1)
-			//player.SnakeMovement(player.prevX, player.prevY-1)
 		case "down":
 			player.SetPosition(player.prevX, player.prevY+1)
-			//player.SnakeMovement(player.prevX, player.prevY+1)
 		}
 
 		player.SnakeMovement()
@@ -69,11 +65,9 @@ func (player *Player) Update(screen *tl.Screen) {
 	//the boundaries also causes a game over state because the tail slides into the head)
 	if playerX < 0 || playerX >= screenWidth {
 		GameOver()
-		//player.SetPosition(player.prevX, player.prevY)
 	}
 	if playerY < 0 || playerY >= screenHeight {
 		GameOver()
-		//player.SetPosition(player.prevX, player.prevY)
 	}
 }
 

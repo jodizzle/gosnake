@@ -55,7 +55,6 @@ func GamePlay() {
 		level:	level,
 	}
 
-	//player.entity.SetCell(0, 0, &tl.Cell{Fg: tl.ColorRed, Ch: '☺'})
 	level.AddEntity(&player)
 	game.Screen().SetLevel(level)
 }
