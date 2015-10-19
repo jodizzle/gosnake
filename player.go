@@ -18,14 +18,6 @@ type Player struct {
 
 //Handles auto events
 func (player *Player) Update(screen *tl.Screen) {
-	//tl.Screen.size() parameters are evidently zero until the game.Start(),
-	//So this is a crude solution intended to center the player after the game has begun
-	if firstPass {
-		screenWidth, screenHeight := screen.Size()
-		player.SetPosition(screenWidth/2, screenHeight/2)
-		firstPass = false
-	}
-
 	player.snakeTime += screen.TimeDelta()
 	if player.snakeTime > 0.1 {
 		player.snakeTime -= 0.1

@@ -5,7 +5,6 @@ import (
 )
 
 var game *tl.Game
-var firstPass bool
 
 func GameOver() {
 	end := tl.NewBaseLevel(tl.Cell {
@@ -21,7 +20,6 @@ func GameOver() {
 
 	end.AddEntity(&endText)
 
-	firstPass = true
 	game.Screen().SetLevel(end)
 }
 
@@ -38,7 +36,6 @@ func GameStart() {
 	
 	start.AddEntity(&startText)
 
-	firstPass = true
 	game.Screen().SetLevel(start)
 	game.Start()
 }
@@ -53,7 +50,9 @@ func GamePlay() {
 		snake:	[]*tl.Rectangle{tl.NewRectangle(0, 0, 1, 1, tl.ColorRed)},
 		level:	level,
 	}
-
+	screenWidth, screenHeight := game.Screen().Size()
+	player.SetPosition(screenWidth/2, screenHeight/2)
+	
 	level.AddEntity(&player)
 	game.Screen().SetLevel(level)
 }
