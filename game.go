@@ -24,9 +24,10 @@ func GameOver() {
 }
 
 func GameStart() {
-	start := tl.NewBaseLevel(
-		tl.Cell{Bg: tl.ColorBlack, Fg: tl.ColorBlack, Ch: 'S'},
-	)
+	start := tl.NewBaseLevel(tl.Cell {
+				Bg: tl.ColorBlack,
+				Fg: tl.ColorBlack,
+			})
 
 	startText := LevelText{
 		tl.NewText(0, 0, startMessage, tl.ColorGreen, tl.ColorBlack),
