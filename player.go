@@ -10,13 +10,13 @@ import (
 // the snakebody, with snake[0] being the head. The direction and the
 // length of the slice influence how the full snake is drawn on the screen.
 type Player struct {
-	snake 		[]*tl.Rectangle
-	direction	string
-	prevX 		int
-	prevY 		int
-	level 		*tl.BaseLevel
-	snakeTime 	float64
-	spawnTime 	float64
+	snake     []*tl.Rectangle
+	direction string
+	prevX     int
+	prevY     int
+	level     *tl.BaseLevel
+	snakeTime float64
+	spawnTime float64
 }
 
 // Returns the size of the player (width, height).
@@ -63,7 +63,7 @@ func (player *Player) Update(screen *tl.Screen) {
 		rando := rand.New(rand.NewSource(time.Now().UnixNano()))
 		spawnX, spawnY := rando.Intn(screenWidth), rando.Intn(screenHeight)
 		screen.Level().AddEntity(tl.NewRectangle(spawnX, spawnY, 1, 1, tl.ColorGreen))
-		
+
 		game.Log("Spawn at (%d,%d)", spawnX, spawnY)
 	}
 
@@ -73,7 +73,7 @@ func (player *Player) Update(screen *tl.Screen) {
 
 	//<= is used on the upper-boundaries to prevent the player from disappearing offscreen
 	//by one square
-	//(Funnily enough, when player.snake is more than one unit long, just stopping the player at 
+	//(Funnily enough, when player.snake is more than one unit long, just stopping the player at
 	//the boundaries also causes a game over state because the tail slides into the head)
 	if playerX < 0 || playerX >= screenWidth {
 		GameOver()
@@ -87,7 +87,7 @@ func (player *Player) Update(screen *tl.Screen) {
 func (player *Player) Draw(screen *tl.Screen) {
 	player.Update(screen)
 
-	for _,s := range player.snake {
+	for _, s := range player.snake {
 		s.Draw(screen)
 	}
 }
@@ -178,7 +178,7 @@ func (player *Player) Eat(rect *tl.Rectangle) {
 
 // Returns true if rect is part of the snake body; false otherwise.
 func (player *Player) InSnake(rect *tl.Rectangle) bool {
-	for i,s := range player.snake {
+	for i, s := range player.snake {
 		if rect == s {
 			game.Log("Death by %d at %d", s, i)
 			return true
