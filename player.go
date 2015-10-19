@@ -6,6 +6,9 @@ import (
 	"time"
 )
 
+// The player is a direction and a slice of rectangles that represent
+// the snakebody, with snake[0] being the head. The direction and the
+// length of the slice influence how the full snake is drawn on the screen.
 type Player struct {
 	snake 		[]*tl.Rectangle
 	direction	string
@@ -16,19 +19,22 @@ type Player struct {
 	spawnTime 	float64
 }
 
+// Returns the size of the player (width, height).
 func (player *Player) Size() (int, int) {
 	return player.snake[0].Size()
 }
 
+// Returns the position of the player (x, y).
 func (player *Player) Position() (int, int) {
 	return player.snake[0].Position()
 }
 
+// Sets the position of the player to (x, y).
 func (player *Player) SetPosition(x, y int) {
 	player.snake[0].SetPosition(x, y)
 }
 
-//Handles auto events
+// Handles player movement and food spawn rate.
 func (player *Player) Update(screen *tl.Screen) {
 	player.snakeTime += screen.TimeDelta()
 	if player.snakeTime > snakeRate {
@@ -77,6 +83,7 @@ func (player *Player) Update(screen *tl.Screen) {
 	}
 }
 
+// Draws the player and the snake body.  Also calls player.Update.
 func (player *Player) Draw(screen *tl.Screen) {
 	player.Update(screen)
 
@@ -85,7 +92,7 @@ func (player *Player) Draw(screen *tl.Screen) {
 	}
 }
 
-//Order seems to be Tick then Draw, but only if there is an event to activate Tick
+// Handles arrow key inputs for movement.
 func (player *Player) Tick(event tl.Event) {
 	if event.Type == tl.EventKey {
 		player.prevX, player.prevY = player.Position()
@@ -102,6 +109,7 @@ func (player *Player) Tick(event tl.Event) {
 	}
 }
 
+// Handles collision with food and snake body.
 func (player *Player) Collide(collision tl.Physical) {
 	//Check if it's a rectangle we're colliding with
 	if rect, ok := collision.(*tl.Rectangle); ok {
@@ -117,16 +125,15 @@ func (player *Player) Collide(collision tl.Physical) {
 	}
 }
 
+// Controls snake-like movement of the snake body.
 func (player *Player) SnakeMovement() {
 	//Don't do anything if it's currently just the head
 	if len(player.snake) > 1 {
-		//Change color to white up here because of difficulties putting it in player.Eat()
+		// Change color to white here because of difficulties putting it in player.Eat()
 		player.snake[len(player.snake)-1].SetColor(tl.ColorWhite)
 
+		// Need Deep Copy:
 		refSnake := make([]*tl.Rectangle, len(player.snake))
-		//Doesn't work because it 'copy' copies the pointers
-		// copy(refSnake, player.snake)
-		//Need Deep Copy:
 		for i := 0; i < len(player.snake); i++ {
 			prevX, prevY := player.snake[i].Position()
 			refSnake[i] = tl.NewRectangle(prevX, prevY, 1, 1, tl.ColorGreen)
@@ -141,7 +148,7 @@ func (player *Player) SnakeMovement() {
 	}
 }
 
-// Remove rectangle and add to snake length
+// Remove rect and add to snake length.
 func (player *Player) Eat(rect *tl.Rectangle) {
 
 	//Removing entities (at least the way that I approached it) doesn't seem to have much of an affect.
@@ -169,6 +176,7 @@ func (player *Player) Eat(rect *tl.Rectangle) {
 	// game.Screen().Level().AddEntity(rect)
 }
 
+// Returns true if rect is part of the snake body; false otherwise.
 func (player *Player) InSnake(rect *tl.Rectangle) bool {
 	for i,s := range player.snake {
 		if rect == s {
