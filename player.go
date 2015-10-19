@@ -16,6 +16,18 @@ type Player struct {
 	spawnTime 	float64
 }
 
+func (player *Player) Size() (int, int) {
+	return player.snake[0].Size()
+}
+
+func (player *Player) Position() (int, int) {
+	return player.snake[0].Position()
+}
+
+func (player *Player) SetPosition(x, y int) {
+	player.snake[0].SetPosition(x, y)
+}
+
 //Handles auto events
 func (player *Player) Update(screen *tl.Screen) {
 	player.snakeTime += screen.TimeDelta()
@@ -65,6 +77,46 @@ func (player *Player) Update(screen *tl.Screen) {
 	}
 }
 
+func (player *Player) Draw(screen *tl.Screen) {
+	player.Update(screen)
+
+	for _,s := range player.snake {
+		s.Draw(screen)
+	}
+}
+
+//Order seems to be Tick then Draw, but only if there is an event to activate Tick
+func (player *Player) Tick(event tl.Event) {
+	if event.Type == tl.EventKey {
+		player.prevX, player.prevY = player.Position()
+		switch event.Key {
+		case tl.KeyArrowRight:
+			player.direction = "right"
+		case tl.KeyArrowLeft:
+			player.direction = "left"
+		case tl.KeyArrowUp:
+			player.direction = "up"
+		case tl.KeyArrowDown:
+			player.direction = "down"
+		}
+	}
+}
+
+func (player *Player) Collide(collision tl.Physical) {
+	//Check if it's a rectangle we're colliding with
+	if rect, ok := collision.(*tl.Rectangle); ok {
+		if rect.Color() == tl.ColorGreen {
+			player.Eat(rect)
+			game.Log("Rectangle Collision: %d", rect)
+		}
+		if rect.Color() == tl.ColorWhite {
+			if player.InSnake(rect) {
+				GameOver()
+			}
+		}
+	}
+}
+
 func (player *Player) SnakeMovement() {
 	//Don't do anything if it's currently just the head
 	if len(player.snake) > 1 {
@@ -86,14 +138,6 @@ func (player *Player) SnakeMovement() {
 		}
 
 		player.snake[1].SetPosition(player.prevX, player.prevY)
-	}
-}
-
-func (player *Player) Draw(screen *tl.Screen) {
-	player.Update(screen)
-
-	for _,s := range player.snake {
-		s.Draw(screen)
 	}
 }
 
@@ -125,23 +169,6 @@ func (player *Player) Eat(rect *tl.Rectangle) {
 	// game.Screen().Level().AddEntity(rect)
 }
 
-//Order seems to be Tick then Draw, but only if there is an event to activate Tick
-func (player *Player) Tick(event tl.Event) {
-	if event.Type == tl.EventKey {
-		player.prevX, player.prevY = player.Position()
-		switch event.Key {
-		case tl.KeyArrowRight:
-			player.direction = "right"
-		case tl.KeyArrowLeft:
-			player.direction = "left"
-		case tl.KeyArrowUp:
-			player.direction = "up"
-		case tl.KeyArrowDown:
-			player.direction = "down"
-		}
-	}
-}
-
 func (player *Player) InSnake(rect *tl.Rectangle) bool {
 	for i,s := range player.snake {
 		if rect == s {
@@ -151,33 +178,4 @@ func (player *Player) InSnake(rect *tl.Rectangle) bool {
 	}
 
 	return false
-}
-
-func (player *Player) Size() (int, int) {
-	return player.snake[0].Size()
-}
-
-
-func (player *Player) Position() (int, int) {
-	return player.snake[0].Position()
-}
-
-
-func (player *Player) SetPosition(x, y int) {
-	player.snake[0].SetPosition(x, y)
-}
-
-func (player *Player) Collide(collision tl.Physical) {
-	//Check if it's a rectangle we're colliding with
-	if rect, ok := collision.(*tl.Rectangle); ok {
-		if rect.Color() == tl.ColorGreen {
-			player.Eat(rect)
-			game.Log("Rectangle Collision: %d", rect)
-		}
-		if rect.Color() == tl.ColorWhite {
-			if player.InSnake(rect) {
-				GameOver()
-			}
-		}
-	}
 }

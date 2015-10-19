@@ -6,21 +6,10 @@ import (
 
 var game *tl.Game
 
-func GameOver() {
-	end := tl.NewBaseLevel(tl.Cell {
-				Bg: tl.ColorRed,
-				Fg: tl.ColorBlack,
-			})
-
-	endText := LevelText {
-		tl.NewText(0, 0, endMessage, tl.ColorGreen, tl.ColorBlack),
-		tl.NewText(0, 0, endInstructions, tl.ColorGreen, tl.ColorBlack),
-		tl.NewText(0, 0, "", tl.ColorGreen, tl.ColorBlack),
-	}
-
-	end.AddEntity(&endText)
-
-	game.Screen().SetLevel(end)
+func NewGame() {
+	game = tl.NewGame()
+	game.SetDebugOn(false)
+	GameStart()
 }
 
 func GameStart() {
@@ -53,9 +42,26 @@ func GamePlay() {
 	}
 	screenWidth, screenHeight := game.Screen().Size()
 	player.SetPosition(screenWidth/2, screenHeight/2)
-	
+
 	level.AddEntity(&player)
 	game.Screen().SetLevel(level)
+}
+
+func GameOver() {
+	end := tl.NewBaseLevel(tl.Cell {
+				Bg: tl.ColorRed,
+				Fg: tl.ColorBlack,
+			})
+
+	endText := LevelText {
+		tl.NewText(0, 0, endMessage, tl.ColorGreen, tl.ColorBlack),
+		tl.NewText(0, 0, endInstructions, tl.ColorGreen, tl.ColorBlack),
+		tl.NewText(0, 0, "", tl.ColorGreen, tl.ColorBlack),
+	}
+
+	end.AddEntity(&endText)
+
+	game.Screen().SetLevel(end)
 }
 
 type LevelText struct {
@@ -80,10 +86,4 @@ func (text *LevelText) Tick(event tl.Event) {
 			GamePlay()
 		}
 	}
-}
-
-func NewGame() {
-	game = tl.NewGame()
-	game.SetDebugOn(false)
-	GameStart()
 }
