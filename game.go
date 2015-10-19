@@ -14,9 +14,9 @@ func GameOver() {
 			})
 
 	endText := LevelText {
-		message: tl.NewText(0, 0, endMessage, tl.ColorGreen, tl.ColorBlack),
-		instructions: tl.NewText(0, 0, endInstructions, tl.ColorGreen, tl.ColorBlack),
-		instructions2: tl.NewText(0, 0, "", tl.ColorGreen, tl.ColorBlack),
+		tl.NewText(0, 0, endMessage, tl.ColorGreen, tl.ColorBlack),
+		tl.NewText(0, 0, endInstructions, tl.ColorGreen, tl.ColorBlack),
+		tl.NewText(0, 0, "", tl.ColorGreen, tl.ColorBlack),
 	}
 
 	end.AddEntity(&endText)
